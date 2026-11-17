@@ -6,6 +6,7 @@ import { Footer } from "@/components/Footer";
 import { Providers } from "@/app/providers";
 import "./globals.css";
 import "./members.css";
+import "./loans.css";
 
 const lora = localFont({
   src: "./fonts/Lora-Regular.ttf",

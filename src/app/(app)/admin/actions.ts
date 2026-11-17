@@ -26,4 +26,5 @@ export async function reviewLoan(
 
   loan.status = status;
   revalidatePath("/admin");
+  revalidatePath("/loans");
 }
