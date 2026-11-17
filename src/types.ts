@@ -20,3 +20,8 @@ export interface Loan {
   reason: string;
   status: LoanStatus;
 }
+
+export interface LoginFormState {
+  email: string;
+  error?: string;
+}

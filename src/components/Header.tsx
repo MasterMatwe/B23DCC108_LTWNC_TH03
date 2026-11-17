@@ -2,12 +2,29 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { signOut, useSession } from "next-auth/react";
+import { useState } from "react";
 
 export function Header() {
   const pathname = usePathname();
+  const { data: session, status } = useSession();
+  const [signingOut, setSigningOut] = useState(false);
+  const [signOutError, setSignOutError] = useState("");
+
+  async function handleSignOut() {
+    setSigningOut(true);
+    setSignOutError("");
+    try {
+      await signOut({ redirectTo: "/" });
+    } catch {
+      setSignOutError("Chưa thể đăng xuất. Vui lòng thử lại.");
+    } finally {
+      setSigningOut(false);
+    }
+  }
   return (
     <header className="site-header">
-      <div className="container header-inner">
+      <div className="container header-inner auth-header">
         <Link
           className="brand"
           href="/"
@@ -36,11 +53,61 @@ export function Header() {
           >
             Sách
           </Link>
+          {session?.user && (
+            <Link
+              href="/loans"
+              prefetch={false}
+              aria-current={pathname === "/loans" ? "page" : undefined}
+            >
+              Sách đã mượn
+            </Link>
+          )}
+          {session?.user.role === "admin" && (
+            <Link
+              href="/admin"
+              prefetch={false}
+              aria-current={pathname.startsWith("/admin") ? "page" : undefined}
+            >
+              Quản trị
+            </Link>
+          )}
         </nav>
-        <span className="header-note">
-          <span />
-          Không gian tri thức
-        </span>
+        <div className="account-menu">
+          {status === "loading" ? (
+            <span className="account-loading" role="status">
+              Đang tải tài khoản…
+            </span>
+          ) : session?.user ? (
+            <>
+              <span className="session-greeting">
+                Xin chào, <strong>{session.user.name}</strong>{" "}
+                <span>({session.user.role})</span>
+              </span>
+              <button
+                className="logout-button"
+                type="button"
+                onClick={handleSignOut}
+                disabled={signingOut}
+              >
+                {signingOut ? "Đang đăng xuất…" : "Đăng xuất"}
+              </button>
+              {signOutError && (
+                <span className="logout-error" role="alert">
+                  {signOutError}
+                </span>
+              )}
+            </>
+          ) : (
+            <Link
+              className="signin-link"
+              href="/login"
+              prefetch={false}
+              aria-current={pathname === "/login" ? "page" : undefined}
+            >
+              Đăng nhập<span aria-hidden="true">↗</span>
+            </Link>
+          )}
+        </div>
       </div>
     </header>
   );

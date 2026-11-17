@@ -3,7 +3,9 @@ import type { ReactNode } from "react";
 import localFont from "next/font/local";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { Providers } from "@/app/providers";
 import "./globals.css";
+import "./members.css";
 
 const lora = localFont({
   src: "./fonts/Lora-Regular.ttf",
@@ -29,9 +31,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <a className="skip-link" href="#main-content">
           Đến nội dung chính
         </a>
-        <Header />
-        {children}
-        <Footer />
+        <Providers>
+          <Header />
+          {children}
+          <Footer />
+        </Providers>
       </body>
     </html>
   );
